@@ -16,10 +16,23 @@ COPY . .
 RUN yarn && yarn task build:server:binary
 
 # We deploy with ubuntu so that devs have a familiar environment.
-FROM ubuntu:18.10
+
+ARG IMAGE_NAME
+FROM ${IMAGE_NAME}:10.0-devel-ubuntu16.04
+LABEL maintainer "NVIDIA CORPORATION <cudatools@nvidia.com>"
+
 WORKDIR /root/project
 COPY --from=0 /src/packages/server/cli-linux-x64 /usr/local/bin/code-server
 EXPOSE 8443
+
+ENV CUDNN_VERSION 7.5.0.56
+LABEL com.nvidia.cudnn.version="${CUDNN_VERSION}"
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+            libcudnn7=$CUDNN_VERSION-1+cuda10.0 \
+            libcudnn7-dev=$CUDNN_VERSION-1+cuda10.0 && \
+    apt-mark hold libcudnn7 && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN apt-get update && apt-get install -y \
 	openssl \
