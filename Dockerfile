@@ -17,8 +17,7 @@ RUN yarn && yarn task build:server:binary
 
 # We deploy with ubuntu so that devs have a familiar environment.
 
-ARG IMAGE_NAME=nvidia/cuda
-FROM ${IMAGE_NAME}:10.0-devel-ubuntu16.04
+FROM nvidia/cuda:10.0-devel-ubuntu16.04
 LABEL maintainer "NVIDIA CORPORATION <cudatools@nvidia.com>"
 
 WORKDIR /root/project
